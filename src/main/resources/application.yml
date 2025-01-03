@@ -1,0 +1,28 @@
+server:
+  port: 8080
+spring:
+  profiles:
+    group:
+      local: local
+    active: local
+  datasource:
+    jdbc-url: jdbc:postgresql://localhost:5432/admin
+    username: admin
+    password: admin
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: org.postgresql.Driver
+    enabled: true
+    hikari:
+      idle-timeout: 30000
+  google:
+    client-id: <your_client_id>
+    client-key: <your_client_secret>
+  github:
+    client-id: <your_client_id>
+    client-key: <your_client_secret>
+  security:
+    jwt:
+      secret-key: test
+      expired-in: 15552000000
+    server:
+      key: abc
