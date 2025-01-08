@@ -3,6 +3,7 @@ package vn.aivhub.oauth.controller;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import vn.aivhub.oauth.config.exception.ApiException;
+import vn.aivhub.oauth.data.request.UserRequest;
 import vn.aivhub.oauth.data.response.LoginResponseDTO;
 import vn.aivhub.oauth.service.LoginService;
 
@@ -18,17 +19,14 @@ public class LoginController {
   }
 
   @PostMapping("/register")
-  public String register(@RequestParam("firstName") String firstName,
-                         @RequestParam("password") String password,
-                         @RequestParam("lastName") String lastName,
-                         @RequestParam("email") String email) throws MessagingException, UnsupportedEncodingException {
-    loginService.registerUser(firstName, lastName, email, password);
-    return "User registered successfully!";
+  public String register(@RequestBody UserRequest userRequest) throws MessagingException, UnsupportedEncodingException {
+    loginService.registerUser(userRequest.getFirstName(), userRequest.getLastName(), userRequest.getEmail(), userRequest.getPassword());
+    return "User registered successfully! You need activate your email address";
   }
 
   @PostMapping("/login")
-  public LoginResponseDTO login(@RequestParam String username, @RequestParam String password) throws ApiException {
-    return loginService.login(username, password);
+  public LoginResponseDTO login(@RequestBody UserRequest userRequest) throws ApiException {
+    return loginService.login(userRequest.getUsername(), userRequest.getPassword());
   }
 
   @GetMapping("/grantcode")

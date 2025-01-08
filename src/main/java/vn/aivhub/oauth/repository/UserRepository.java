@@ -1,9 +1,11 @@
 package vn.aivhub.oauth.repository;
 
+import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
-import vn.aivhub.data.tables.pojos.User;
+import vn.aivhub.data.tables.pojos  .User;
 
+import java.util.List;
 import java.util.Optional;
 
 import static vn.aivhub.data.Tables.USER;
@@ -24,6 +26,13 @@ public class UserRepository {
       .fetchOneInto(User.class);
   }
 
+  public List<User> findAll(Condition condition) {
+    return dslContext.select()
+      .from(USER)
+      .where(condition)
+      .fetchInto(User.class);
+  }
+
   public Optional<User> findUserById(Integer id) {
     return dslContext.select()
       .from(USER)
@@ -37,6 +46,13 @@ public class UserRepository {
       .execute();
     user.setId(dslContext.lastID().intValue());
     return user;
+  }
+
+
+  public void delete(User user) {
+    dslContext.delete(USER)
+      .where(USER.ID.eq(user.getId()))
+      .execute();
   }
 
   public User update(User user) {

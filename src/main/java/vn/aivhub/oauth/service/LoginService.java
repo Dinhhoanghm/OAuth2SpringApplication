@@ -81,8 +81,11 @@ public class LoginService {
   public LoginResponseDTO login(String username, String password) throws ApiException {
     User user = userRepository.findByEmail(username);
     if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-      return saveTokenForUser(user);
+      LoginResponseDTO responseDTO =  saveTokenForUser(user);
+      responseDTO.setUser(user);
+      return responseDTO;
     } else {
+      System.out.println(passwordEncoder.encode(password));
       throw new ApiException("Invalid username or password");
     }
   }
@@ -147,7 +150,7 @@ public class LoginService {
     user.setEmail(jsonObject.getString("email").replace("\"", ""));
     user.setFirstName(jsonObject.getString("name").replace("\"", ""));
     user.setLastName(jsonObject.getString("given_name").replace("\"", ""));
-    user.setPassword(UUID.randomUUID().toString());
+    user.setPassword("password");
     return user;
   }
 
@@ -165,7 +168,7 @@ public class LoginService {
     user.setEmail(jsonObject.getString("html_url"));
     user.setUsername(jsonObject.getString("login"));
     user.setFirstName(jsonObject.getString("name"));
-    user.setPassword("123456789");
+    user.setPassword("password");
     return user;
   }
 
@@ -177,7 +180,7 @@ public class LoginService {
 
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("code", code);
-    params.add("redirect_uri", "http://localhost:8080/grantcode");
+    params.add("redirect_uri", "http://localhost:5173/google");
     params.add("client_id", clientId);
     params.add("client_secret", clientSecret);
     params.add("scope", "https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile");
@@ -188,7 +191,8 @@ public class LoginService {
     HttpEntity<MultiValueMap<String, String>> requestEntity = new HttpEntity<>(params, httpHeaders);
 
     String url = "https://oauth2.googleapis.com/token";
-    String response = restTemplate.postForObject(url, requestEntity, String.class);
+    String response = restTemplate.
+      postForObject(url, requestEntity, String.class);
     JsonObject jsonObject = new JsonObject(response);
 
     return jsonObject.getString("access_token").replace("\"", "");
@@ -201,7 +205,7 @@ public class LoginService {
 
     MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
     params.add("code", code);
-    params.add("redirect_uri", "http://localhost:8080/github/grantcode");
+    params.add("redirect_uri", "http://localhost:5173/github");
     params.add("client_id", githubClientId);
     params.add("client_secret", githubClientKey);
     params.add("scope", "user");
@@ -227,7 +231,7 @@ public class LoginService {
     }
 
     user.setEmailVerified(true);
-    userRepository.save(user);
+    userRepository.update(user);
     accountVerificationRepository.deleteById(verification.getId());
     return "Account verified successfully!";
   }
@@ -307,8 +311,8 @@ public class LoginService {
     token.setAccessExpirationTime(dto.getExpirationTime());
     token.setRefreshExpirationTime(LocalDateTime.now().plusDays(1));
     token.setUserId(user.getId());
-
     oauthTokenRepository.save(token);
+    dto.setUser(user);
     return dto;
   }
 
