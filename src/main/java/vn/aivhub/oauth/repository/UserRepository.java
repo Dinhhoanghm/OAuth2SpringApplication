@@ -2,8 +2,10 @@ package vn.aivhub.oauth.repository;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.impl.TableImpl;
 import org.springframework.stereotype.Repository;
-import vn.aivhub.data.tables.pojos  .User;
+import vn.aivhub.data.tables.pojos.User;
+import vn.aivhub.data.tables.records.UserRecord;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,11 +14,21 @@ import static vn.aivhub.data.Tables.USER;
 import static vn.aivhub.oauth.util.PostgresqlUtil.toInsertQueries;
 
 @Repository
-public class UserRepository {
+public class UserRepository extends AbsRepository<UserRecord, User, Integer> {
   private final DSLContext dslContext;
 
   public UserRepository(DSLContext dslContext) {
     this.dslContext = dslContext;
+  }
+
+  @Override
+  protected DSLContext getDslContext() {
+    return dslContext;
+  }
+
+  @Override
+  protected TableImpl<UserRecord> getTable() {
+    return USER;
   }
 
   public User findByEmail(String email) {
@@ -62,4 +74,6 @@ public class UserRepository {
       .execute();
     return user;
   }
+
+
 }
