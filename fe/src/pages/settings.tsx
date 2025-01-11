@@ -7,13 +7,85 @@ import { PlusCircle, Pencil, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import axiosInstance from '../axios';
+import { Switch } from '../components/ui/switch';
 
 export default function SettingsPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [isAddingUser, setIsAddingUser] = useState(false);
   const [isEditingUser, setIsEditingUser] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
-  const [newUser, setNewUser] = useState({ last_name: '', email: '', role: '', password: '' });
+  const [newUser, setNewUser] = useState({ last_name: '', email: '', role: '', password: '', company: '' });
+  const [userData, setUserData] = useState({
+    id: '',
+    last_name: '',
+    email: '',
+    role: '',
+    company: '',
+  });
+  const [passwords, setPasswords] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+
+  const handleInputPasswordChange = (e) => {
+    const { id, value } = e.target;
+    setPasswords((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const updatePassword = async () => {
+    const { currentPassword, newPassword, confirmPassword } = passwords;
+
+    // Validate passwords
+    if (newPassword !== confirmPassword) {
+      alert('New password and confirm password do not match.');
+      return;
+    }
+
+    try {
+      const response = await axiosInstance.get(
+        `http://localhost:8080/api/user/changepassword?new_password=${newPassword}&old_password=${currentPassword}`
+      );
+
+      alert(response.data);
+    } catch (err) {
+      console.log(err);
+      alert('Failed to update password');
+    }
+  };
+
+  // Function to fetch user data from the API
+  const fetchUserData = async () => {
+    try {
+      const response = await axiosInstance.get('http://localhost:8080/api/user/get'); // Replace with your API URL
+      const data = response.data;
+
+      setUserData({
+        id: data.id,
+        last_name: data.last_name || data.first_name,
+        role: data.role,
+        email: data.email,
+        company: data.company || 'Unknown', // Handle missing company data
+      });
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setUserData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
 
   const hardcodedUsers = [
     { id: '1', name: 'John Doe', email: 'john@example.com', role: 'Admin', status: 'Active', password: 'password123' },
@@ -42,7 +114,7 @@ export default function SettingsPage() {
     try {
       const response = await axiosInstance.post('/api/user/insert', newUser);
       setUsers((prevUsers) => [...prevUsers, response.data]);
-      setNewUser({ last_name: '', email: '', role: '', password: '' });
+      setNewUser({ last_name: '', email: '', role: '', password: '', company: '' });
       setIsAddingUser(false);
     } catch (error) {
       console.error('Error adding user:', error);
@@ -79,7 +151,7 @@ export default function SettingsPage() {
 
       <Tabs defaultValue="users" className="w-full">
         <TabsList className="w-full justify-start border-b rounded-none h-auto p-0 bg-transparent">
-          {['Users'].map((tab) => (
+          {['Profile', 'Security', 'Users', 'Notifications', 'Billing'].map((tab) => (
             <TabsTrigger
               key={tab.toLowerCase()}
               value={tab.toLowerCase()}
@@ -160,6 +232,20 @@ export default function SettingsPage() {
                           required={!isEditingUser}
                         />
                       </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="company">Company</Label>
+                        <Input
+                          id="company"
+                          type="company"
+                          value={isEditingUser ? currentUser?.company : newUser.company}
+                          onChange={(e) =>
+                            isEditingUser
+                              ? setCurrentUser({ ...currentUser, company: e.target.value })
+                              : setNewUser({ ...newUser, company: e.target.value })
+                          }
+                          required={!isEditingUser}
+                        />
+                      </div>
                       <div className="flex justify-end space-x-2">
                         <Button
                           variant="outline"
@@ -233,6 +319,154 @@ export default function SettingsPage() {
                       </tbody>
                     </table>
                   </div>
+                </div>
+              </Card>
+            </div>
+          </TabsContent>
+          <TabsContent value="profile">
+            <Card>
+              <div className="p-6">
+                <h3 className="text-lg font-medium">Profile Information</h3>
+                <div className="mt-4 space-y-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="name">Full Name</Label>
+                    <Input id="name" value={userData.last_name} onChange={handleInputChange} />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input id="email" type="email" value={userData.email} onChange={handleInputChange} />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="company">Company</Label>
+                    <Input id="company" value={userData.company} onChange={handleInputChange} />
+                  </div>
+                  <Button>Save Changes</Button>
+                </div>
+              </div>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="security">
+            <Card>
+              <div className="p-6">
+                <h3 className="text-lg font-medium">Security Settings</h3>
+
+                <div className="mt-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="space-y-0.5">
+                      <div className="font-medium">Two-Factor Authentication</div>
+                      <div className="text-sm text-gray-500">Add an extra layer of security to your account</div>
+                    </div>
+                    <Switch />
+                  </div>
+
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="currentPassword">Current Password</Label>
+                      <Input
+                        id="currentPassword"
+                        type="password"
+                        className="w-full"
+                        value={passwords.currentPassword}
+                        onChange={handleInputPasswordChange}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="newPassword">New Password</Label>
+                      <Input
+                        id="newPassword"
+                        type="password"
+                        className="w-full"
+                        value={passwords.newPassword}
+                        onChange={handleInputPasswordChange}
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                      <Input
+                        id="confirmPassword"
+                        type="password"
+                        className="w-full"
+                        value={passwords.confirmPassword}
+                        onChange={handleInputPasswordChange}
+                      />
+                    </div>
+                    <Button variant="outline" className="mt-2" onClick={updatePassword}>
+                      Update
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </TabsContent>
+          <TabsContent value="notifications">
+            <Card>
+              <div className="p-6">
+                <h3 className="text-lg font-medium">Notification Preferences</h3>
+                <div className="mt-6 space-y-6">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <div className="font-medium">Email Notifications</div>
+                      <div className="text-sm text-gray-500">Receive email notifications for important updates</div>
+                    </div>
+                    <Switch />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <div className="font-medium">SMS Notifications</div>
+                      <div className="text-sm text-gray-500">Get SMS alerts for critical events</div>
+                    </div>
+                    <Switch />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <div className="font-medium">Browser Notifications</div>
+                      <div className="text-sm text-gray-500">Show desktop notifications in your browser</div>
+                    </div>
+                    <Switch />
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <div className="font-medium">Marketing Communications</div>
+                      <div className="text-sm text-gray-500">Receive updates about new features and promotions</div>
+                    </div>
+                    <Switch />
+                  </div>
+                </div>
+              </div>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="billing">
+            <div className="space-y-6">
+              <Card>
+                <div className="p-6">
+                  <h3 className="text-lg font-medium mb-4">Payment Methods</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="space-y-1">
+                        <div className="font-medium">VISA •••• 4242</div>
+                        <div className="text-sm text-gray-500">Expires 12/2024</div>
+                      </div>
+                      <div className="text-sm text-gray-500">Default</div>
+                    </div>
+
+                    <Button variant="outline" className="mt-4">
+                      Add Payment Method
+                    </Button>
+                  </div>
+                </div>
+              </Card>
+
+              <Card>
+                <div className="p-6">
+                  <h3 className="text-lg font-medium mb-4">Billing History</h3>
+                  <div className="text-sm text-gray-500">No billing history available</div>
                 </div>
               </Card>
             </div>

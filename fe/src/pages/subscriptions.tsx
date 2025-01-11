@@ -57,7 +57,6 @@ export default function SubscriptionsPage() {
       alert('Failed to add subscription. Please try again.');
     }
   };
-
   const handleUpdateSubscriptionPlan = (id: number, newPlanId: string) => {
     const planId = Number.parseInt(newPlanId);
     console.log('planSubmit', planId);
@@ -65,6 +64,19 @@ export default function SubscriptionsPage() {
       ...prev,
       [id]: planId,
     }));
+  };
+  const handleDeleteSubscription = async (subscriptionId: number) => {
+    try {
+      // Replace DELETE with POST and include necessary payload
+      await await axiosInstance.delete(`/api/planUser/delete?id=${subscriptionId}`);
+
+      // Remove the deleted subscription from the state
+      setActiveSubscriptions((prev) => prev.filter((sub) => sub.id !== subscriptionId));
+      alert('Subscription deleted successfully!');
+    } catch (error) {
+      console.error('Error deleting subscription:', error);
+      alert('Failed to delete subscription. Please try again.');
+    }
   };
 
   // Save Updated Plan
@@ -224,6 +236,9 @@ export default function SubscriptionsPage() {
                             </div>
                           </form>
                         )}
+                        <Button variant="outline" size="sm" onClick={() => handleDeleteSubscription(subscription.id)}>
+                          Delete
+                        </Button>
                       </div>
                     </div>
                   );
@@ -260,7 +275,10 @@ export default function SubscriptionsPage() {
                   <Button
                     className="w-full"
                     variant={activeSubscriptions.some((s: any) => s.plan_id === plan.id) ? 'default' : 'outline'}
-                    onClick={() => handleAddSubscription(plan.id)}
+                    onClick={() => {
+                      setFormData({ ...formData, plan_id: plan.id });
+                      handleAddSubscription();
+                    }}
                     disabled={activeSubscriptions.some((s: any) => s.plan_id === plan.id)}
                   >
                     {activeSubscriptions.some((s: any) => s.plan_id === plan.id) ? 'Current Plan' : 'Choose Plan'}
