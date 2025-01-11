@@ -16,7 +16,7 @@ create table if not exists "user"
 comment on column "user".role is 'USER - ADMIN';
 
 alter table "user"
-  owner to admin;
+  owner to postgres;
 
 create table if not exists account_verifycation
 (
@@ -26,7 +26,7 @@ create table if not exists account_verifycation
   );
 
 alter table account_verifycation
-  owner to admin;
+  owner to postgres;
 
 create table if not exists oauth_token
 (
@@ -41,7 +41,7 @@ create table if not exists oauth_token
   );
 
 alter table oauth_token
-  owner to admin;
+  owner to postgres;
 
 create table if not exists reset_password_token
 (
@@ -55,7 +55,7 @@ create table if not exists reset_password_token
   );
 
 alter table reset_password_token
-  owner to admin;
+  owner to postgres;
 
 create table if not exists charge_plan
 (
@@ -71,7 +71,7 @@ create table if not exists charge_plan
   );
 
 alter table charge_plan
-  owner to admin;
+  owner to postgres;
 
 create table if not exists plan_user
 (
@@ -84,7 +84,7 @@ create table if not exists plan_user
 );
 
 alter table plan_user
-  owner to admin;
+  owner to postgres;
 
 create table if not exists billing_history
 (
@@ -99,5 +99,5 @@ create table if not exists billing_history
   );
 
 alter table billing_history
-  owner to admin;
+  owner to postgres;
 

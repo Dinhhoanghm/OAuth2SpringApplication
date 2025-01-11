@@ -1,5 +1,6 @@
 HELP.md
 target/
+fe/node_modules
 **/src/main/resources/application-local.yml
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/

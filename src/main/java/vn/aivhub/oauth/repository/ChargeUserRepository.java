@@ -70,9 +70,9 @@ public class ChargeUserRepository extends AbsRepository<PlanUserRecord, PlanUser
   }
 
 
-  public void delete(PlanUser planUser) {
+  public void delete(Integer id) {
     dslContext.delete(PLAN_USER)
-      .where(PLAN_USER.ID.eq(planUser.getId()))
+      .where(PLAN_USER.ID.eq(id))
       .execute();
   }
 

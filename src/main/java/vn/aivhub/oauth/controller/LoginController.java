@@ -63,6 +63,7 @@ public class LoginController {
     return loginService.changePasswordWithToken(token, newPassword);
   }
 
+
   @PutMapping("/logoutuser")
   public String logoutUser() {
     String email = SecurityContextHolder.getContext().getAuthentication().getName();
