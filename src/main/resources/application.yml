@@ -6,7 +6,7 @@ spring:
       local: local
     active: local
   datasource:
-    jdbc-url: jdbc:postgresql://localhost:5432/admin
+    jdbc-url: jdbc:postgresql://192.168.88.130:5432/admin
     username: admin
     password: admin
     type: com.zaxxer.hikari.HikariDataSource
