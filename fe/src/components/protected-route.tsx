@@ -14,7 +14,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
   useEffect(() => {
     // Immediately redirect user role to marketplace
     if (user?.role === 'user') {
-      window.location.replace('https://marketplace.aivhub.com:8080/aiv');
+      window.location.replace('http://localhost:8080/aiv');
     }
   }, [user]);
 
@@ -24,7 +24,7 @@ export function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) 
 
   // Double-check user role
   if (user.role === 'user') {
-    window.location.replace('https://marketplace.aivhub.com:8080/aiv');
+    window.location.replace('http://localhost:8080/aiv');
     return null;
   }
 
