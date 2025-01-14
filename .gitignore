@@ -2,7 +2,9 @@ HELP.md
 target/
 **/src/main/resources/application-local.yml
 !.mvn/wrapper/maven-wrapper.jar
+/fe/node_modules/
 !**/src/main/**/target/
+!**/fe/node_modules/
 !**/src/test/**/target/
 
 ### STS ###

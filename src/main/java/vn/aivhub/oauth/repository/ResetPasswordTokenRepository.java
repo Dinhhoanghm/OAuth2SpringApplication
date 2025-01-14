@@ -1,8 +1,10 @@
 package vn.aivhub.oauth.repository;
 
 import org.jooq.DSLContext;
+import org.jooq.impl.TableImpl;
 import org.springframework.stereotype.Repository;
 import vn.aivhub.data.tables.pojos.ResetPasswordToken;
+import vn.aivhub.data.tables.records.ResetPasswordTokenRecord;
 
 import java.util.Optional;
 
@@ -10,11 +12,21 @@ import static vn.aivhub.data.tables.ResetPasswordToken.RESET_PASSWORD_TOKEN;
 import static vn.aivhub.oauth.util.PostgresqlUtil.toInsertQueries;
 
 @Repository
-public class ResetPasswordTokenRepository {
+public class ResetPasswordTokenRepository extends AbsRepository<ResetPasswordTokenRecord,ResetPasswordToken,Integer> {
   private final DSLContext dslContext;
 
   public ResetPasswordTokenRepository(DSLContext dslContext) {
     this.dslContext = dslContext;
+  }
+
+  @Override
+  protected DSLContext getDslContext() {
+    return dslContext;
+  }
+
+  @Override
+  protected TableImpl<ResetPasswordTokenRecord> getTable() {
+    return RESET_PASSWORD_TOKEN;
   }
 
   public ResetPasswordToken save(ResetPasswordToken resetPasswordToken) {
@@ -25,7 +37,7 @@ public class ResetPasswordTokenRepository {
     return resetPasswordToken;
   }
 
-  public Optional<ResetPasswordToken> findById(Integer id) {
+  public Optional<ResetPasswordToken> findByIdBlocking(Integer id) {
     return dslContext.select()
       .from(RESET_PASSWORD_TOKEN)
       .where(RESET_PASSWORD_TOKEN.ID.eq(id))

@@ -4,7 +4,6 @@ import org.mapstruct.Context;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import vn.aivhub.data.tables.pojos.PlanUser;
-import vn.aivhub.oauth.data.response.ChargePlanResponse;
 import vn.aivhub.oauth.data.response.PlanUserResponse;
 import vn.aivhub.oauth.service.PlanUserService;
 
@@ -48,8 +47,8 @@ public class ChargeUserController {
 
 
   @DeleteMapping("/delete")
-  public String delete(@RequestBody PlanUser planPlanUser) {
-    planPlanUserService.deletePlanUser(planPlanUser);
+  public String delete(@RequestParam Integer id) {
+    planPlanUserService.deletePlanUser(id);
     return "success";
   }
 }

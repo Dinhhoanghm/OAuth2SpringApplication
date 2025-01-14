@@ -2,8 +2,10 @@ package vn.aivhub.oauth.repository;
 
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.impl.TableImpl;
 import org.springframework.stereotype.Repository;
 import vn.aivhub.data.tables.pojos.ChargePlan;
+import vn.aivhub.data.tables.records.ChargePlanRecord;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,11 +14,21 @@ import static vn.aivhub.data.Tables.CHARGE_PLAN;
 import static vn.aivhub.oauth.util.PostgresqlUtil.toInsertQueries;
 
 @Repository
-public class ChargePlanRepository {
+public class ChargePlanRepository extends AbsRepository<ChargePlanRecord, ChargePlan, Integer> {
   private final DSLContext dslContext;
 
   public ChargePlanRepository(DSLContext dslContext) {
     this.dslContext = dslContext;
+  }
+
+  @Override
+  protected DSLContext getDslContext() {
+    return dslContext;
+  }
+
+  @Override
+  protected TableImpl<ChargePlanRecord> getTable() {
+    return CHARGE_PLAN;
   }
 
 
@@ -63,4 +75,5 @@ public class ChargePlanRepository {
       .execute();
     return chargePlan;
   }
+
 }

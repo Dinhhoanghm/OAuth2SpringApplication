@@ -11,6 +11,7 @@ import vn.aivhub.oauth.repository.ChargeUserRepository;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static vn.aivhub.data.tables.ChargePlan.CHARGE_PLAN;
@@ -39,19 +40,24 @@ public class PlanUserService {
     List<ChargePlan> chargePlans = chargePlanRepository.findAll(CHARGE_PLAN.ID.in(planIds));
     Map<Integer, ChargePlan> chargePlanMap = collectToMap(chargePlans, ChargePlan::getId);
     List<PlanUserResponse> responses = planUsers.stream().map(s -> {
-        ChargePlan chargePlan = chargePlanMap.getOrDefault(s.getPlanId(), null);
-        return new PlanUserResponse()
-          .setId(s.getId())
-          .setName(chargePlan.getName())
-          .setProjectSize(chargePlan.getProjectSize())
-          .setStorage(chargePlan.getStorage())
-          .setMoney(chargePlan.getMoney())
-          .setStatus(s.getStatus())
-          .setUserId(s.getUserId())
-          .setPlanId(s.getPlanId())
-          .setSupportType(chargePlan.getSupportType());
-      }
-    ).collect(Collectors.toList());
+          ChargePlan chargePlan = chargePlanMap.getOrDefault(s.getPlanId(), null);
+          if (chargePlan == null) {
+            return null;
+          }
+          return new PlanUserResponse()
+            .setId(s.getId())
+            .setName(chargePlan.getName())
+            .setProjectSize(chargePlan.getProjectSize())
+            .setStorage(chargePlan.getStorage())
+            .setMoney(chargePlan.getMoney())
+            .setStatus(s.getStatus())
+            .setUserId(s.getUserId())
+            .setPlanId(s.getPlanId())
+            .setSupportType(chargePlan.getSupportType());
+        }
+      )
+      .filter(Objects::nonNull)
+      .collect(Collectors.toList());
     return responses;
   }
 
@@ -63,8 +69,8 @@ public class PlanUserService {
     return planUserRepository.update(planUser);
   }
 
-  public boolean deletePlanUser(PlanUser planUser) {
-    planUserRepository.delete(planUser);
+  public boolean deletePlanUser(Integer id) {
+    planUserRepository.delete(id);
     return true;
   }
 }

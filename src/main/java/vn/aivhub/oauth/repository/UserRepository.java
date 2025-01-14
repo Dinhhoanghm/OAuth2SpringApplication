@@ -1,22 +1,36 @@
 package vn.aivhub.oauth.repository;
 
+import io.reactivex.rxjava3.core.Single;
 import org.jooq.Condition;
 import org.jooq.DSLContext;
+import org.jooq.impl.TableImpl;
 import org.springframework.stereotype.Repository;
-import vn.aivhub.data.tables.pojos  .User;
+import vn.aivhub.data.tables.pojos.User;
+import vn.aivhub.data.tables.records.UserRecord;
 
 import java.util.List;
 import java.util.Optional;
 
 import static vn.aivhub.data.Tables.USER;
 import static vn.aivhub.oauth.util.PostgresqlUtil.toInsertQueries;
+import static vn.aivhub.oauth.util.RxTemplate.rxSchedulerIo;
 
 @Repository
-public class UserRepository {
+public class UserRepository extends AbsRepository<UserRecord, User, Integer> {
   private final DSLContext dslContext;
 
   public UserRepository(DSLContext dslContext) {
     this.dslContext = dslContext;
+  }
+
+  @Override
+  protected DSLContext getDslContext() {
+    return dslContext;
+  }
+
+  @Override
+  protected TableImpl<UserRecord> getTable() {
+    return USER;
   }
 
   public User findByEmail(String email) {
@@ -61,5 +75,24 @@ public class UserRepository {
       .where(USER.ID.eq(user.getId()))
       .execute();
     return user;
+  }
+
+  public Single<String> updateUserPassWord(User user, String oldPassword) {
+    return rxSchedulerIo(() -> {
+      dslContext.update(USER)
+        .set(USER.PASSWORD, user.getPassword())
+        .where(USER.ID.eq(user.getId())
+          .and(USER.PASSWORD.eq(oldPassword)))
+        .execute();
+      return "Successful update password";
+    });
+  }
+  public Single<User> checkExist(Integer userId) {
+    return rxSchedulerIo(() -> {
+      return dslContext.select()
+        .from(USER)
+        .where(USER.ID.eq(userId))
+        .fetchOneInto(User.class);
+    });
   }
 }
