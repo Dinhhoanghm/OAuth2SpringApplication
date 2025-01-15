@@ -1,16 +1,23 @@
 create table if not exists "user"
 (
-  id             serial
+  id                serial
   constraint user_pk
   primary key,
-  username       varchar(200),
-  password       varchar(500),
-  first_name     varchar(200),
-  last_name      varchar(100),
-  email          varchar(200),
-  enabled        boolean,
-  email_verified boolean,
-  role           varchar(100)
+  username          varchar(200),
+  password          varchar(500),
+  first_name        varchar(200),
+  last_name         varchar(100),
+  email             varchar(200),
+  enabled           boolean,
+  email_verified    boolean,
+  role              varchar(100),
+  company           varchar(200),
+  is_admin          boolean,
+  dept              varchar(200),
+  iat               integer,
+  exp               integer,
+  sub               varchar(100),
+  subscription_type varchar(100)
   );
 
 comment on column "user".role is 'USER - ADMIN';
@@ -33,12 +40,12 @@ create table if not exists oauth_token
   id                      serial
   constraint oauth_token_pk
   primary key,
-  refresh_token           varchar(500),
-  access_token            varchar(500),
+  refresh_token           text,
+  access_token            text,
   user_id                 integer,
   access_expiration_time  timestamp,
   refresh_expiration_time timestamp
-  );
+);
 
 alter table oauth_token
   owner to admin;
@@ -95,7 +102,8 @@ create table if not exists billing_history
   status       varchar,
   created_at   timestamp default now(),
   paid_at      timestamp,
-  amount       double precision
+  amount       double precision,
+  session_id   varchar(300)
   );
 
 alter table billing_history

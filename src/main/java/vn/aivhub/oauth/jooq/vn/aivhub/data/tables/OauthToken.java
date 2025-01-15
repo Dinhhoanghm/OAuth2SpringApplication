@@ -57,12 +57,12 @@ public class OauthToken extends TableImpl<OauthTokenRecord> {
     /**
      * The column <code>public.oauth_token.refresh_token</code>.
      */
-    public static final TableField<OauthTokenRecord, String> REFRESH_TOKEN = createField(DSL.name("refresh_token"), SQLDataType.VARCHAR(500), OAUTH_TOKEN, "");
+    public static final TableField<OauthTokenRecord, String> REFRESH_TOKEN = createField(DSL.name("refresh_token"), SQLDataType.CLOB, OAUTH_TOKEN, "");
 
     /**
      * The column <code>public.oauth_token.access_token</code>.
      */
-    public static final TableField<OauthTokenRecord, String> ACCESS_TOKEN = createField(DSL.name("access_token"), SQLDataType.VARCHAR(500), OAUTH_TOKEN, "");
+    public static final TableField<OauthTokenRecord, String> ACCESS_TOKEN = createField(DSL.name("access_token"), SQLDataType.CLOB, OAUTH_TOKEN, "");
 
     /**
      * The column <code>public.oauth_token.user_id</code>.
