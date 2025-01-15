@@ -14,4 +14,5 @@ import lombok.experimental.Accessors;
 public class CreatePaymentResponse {
   private String sessionId;
   private String sessionUrl;
+  private String clientSecret;
 }

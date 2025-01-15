@@ -7,11 +7,17 @@ import Servers from '@/pages/servers';
 import Settings from '@/pages/settings';
 import ProtectedRoute from '@/components/protected-route';
 import RegisterPage from '../pages/register';
+import { Elements } from '@stripe/react-stripe-js';
+import IntegratedCheckout from '../pages/integrateCheckout';
+import Success from '../pages/successFulPayment';
+import Failure from '../pages/failurePayment';
 
 export default function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/success" element={<Success />} />
+      <Route path="/cancel" element={<Failure />} />
       <Route path="/google" element={<LoginPage />} />
       <Route path="/github" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />

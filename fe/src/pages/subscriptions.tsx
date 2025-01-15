@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import axiosInstance from '../axios';
+import IntegratedCheckout from './integrateCheckout';
 
 interface Plan {
   id: string;
@@ -15,6 +16,16 @@ interface Plan {
   money: number; // Monthly cost
 }
 
+interface Billing {
+  id: number;
+  plan_user_id: number;
+  status: string;
+  created_at: string; // or use `LocalDateTime` if your app supports it
+  paid_at: string; // or use `LocalDateTime`
+  amount: number;
+  session_id: string;
+}
+
 export default function SubscriptionsPage() {
   const [activeSubscriptions, setActiveSubscriptions] = useState([]);
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -23,6 +34,21 @@ export default function SubscriptionsPage() {
   const [formData, setFormData] = useState({ user_id: '', plan_id: '', status: 'active' });
   const [updatedSubscriptions, setUpdatedSubscriptions] = useState<any>({});
   const [showUpdateForm, setShowUpdateForm] = useState(false); // Track form visibility for each subscription
+  const [selectedSubscriptionId, setSelectedSubscriptionId] = useState<number | null>(null); // Track selected subscriptionId
+  const [billingHistory, setBillingHistory] = useState<Billing[]>([]);
+  useEffect(() => {
+    // Fetch billing history from the API using axios
+    const fetchBillingHistory = async () => {
+      try {
+        const response = await axiosInstance.get('/api/billingHistory/getAll'); // Replace with your API endpoint
+        setBillingHistory(response.data); // Assuming response.data contains the billing data
+      } catch (error) {
+        console.error('Error fetching billing history:', error);
+      }
+    };
+
+    fetchBillingHistory();
+  }, []);
 
   // Fetch data from backend API
   useEffect(() => {
@@ -239,6 +265,15 @@ export default function SubscriptionsPage() {
                         <Button variant="outline" size="sm" onClick={() => handleDeleteSubscription(subscription.id)}>
                           Delete
                         </Button>
+                        <div className="w-full sm:w-1/3">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedSubscriptionId(subscription.id)} // Set selectedSubscriptionId when "Pay Now" is clicked
+                          >
+                            Pay Now
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   );
@@ -249,7 +284,6 @@ export default function SubscriptionsPage() {
             </div>
           </CardContent>
         </Card>
-
         {/* Available Plans */}
         <Card>
           <CardHeader>
@@ -288,7 +322,41 @@ export default function SubscriptionsPage() {
             </div>
           </CardContent>
         </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Billing History</CardTitle>
+            <Button variant="outline" size="sm">
+              Download All
+            </Button>
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-lg border">
+              {/* Iterate through the billingHistory to dynamically create each record */}
+              {billingHistory.map((billing) => (
+                <div key={billing.id} className="flex items-center justify-between p-4 border-b">
+                  <div className="space-y-1">
+                    <p className="font-medium">
+                      {billing.status === 'Paid' ? 'Pro Plan Subscription' : 'Basic Plan Subscription'}
+                    </p>
+                    <p className="text-sm text-gray-500">{new Date(billing.created_at).toLocaleDateString()}</p>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <span className={`text-${billing.status === 'Paid' ? 'green' : 'red'}-600 font-medium`}>
+                      {billing.status}
+                    </span>
+                    <p className="font-medium">{formatCurrency(billing.amount)}</p>
+                    <Button variant="ghost" size="sm">
+                      View
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
+      {/* Show Payment Modal when triggered */}
+      {selectedSubscriptionId && <IntegratedCheckout subscriptionId={selectedSubscriptionId} />}
     </div>
   );
 }

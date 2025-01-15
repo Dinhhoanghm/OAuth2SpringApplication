@@ -74,4 +74,11 @@ public class BillingHistoryRepository extends AbsRepository<BillingHistoryRecord
       .execute();
     return billingHistory;
   }
+
+  public void updateBySessionId(String sessionId, String status) {
+    dslContext.update(BILLING_HISTORY)
+      .set(BILLING_HISTORY.STATUS, status)
+      .where(BILLING_HISTORY.SESSION_ID.eq(sessionId))
+      .execute();
+  }
 }

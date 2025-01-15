@@ -7,13 +7,14 @@ import com.stripe.param.checkout.SessionCreateParams;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import vn.aivhub.data.tables.pojos.BillingHistory;
 import vn.aivhub.oauth.data.request.stripe.CreatePaymentRequest;
 import vn.aivhub.oauth.data.response.stripe.CapturePaymentResponse;
 import vn.aivhub.oauth.data.response.stripe.CreatePaymentResponse;
 import vn.aivhub.oauth.data.response.stripe.StripeResponse;
+import vn.aivhub.oauth.repository.BillingHistoryRepository;
 
-import javax.annotation.PostConstruct;
-
+import static vn.aivhub.data.Tables.BILLING_HISTORY;
 import static vn.aivhub.oauth.data.constant.StripeConstant.*;
 import static vn.aivhub.oauth.util.StripeUtil.*;
 
@@ -22,13 +23,14 @@ import static vn.aivhub.oauth.util.StripeUtil.*;
 public class StripeService {
   @Value("${spring.stripe.secret-key}")
   private String secretKey;
+  private final BillingHistoryRepository billingHistoryRepository;
 
-  @PostConstruct
-  public void init() {
-    Stripe.apiKey = secretKey;
+  public StripeService(BillingHistoryRepository billingHistoryRepository) {
+    this.billingHistoryRepository = billingHistoryRepository;
   }
 
   public StripeResponse createPayment(CreatePaymentRequest createPaymentRequest) {
+    Stripe.apiKey = secretKey;
     SessionCreateParams.LineItem.PriceData.ProductData productData = getStripeProductData(createPaymentRequest);
 
     SessionCreateParams.LineItem.PriceData priceData = getStripePriceData(createPaymentRequest, productData);
@@ -57,7 +59,12 @@ public class StripeService {
       .sessionId(session.getId())
       .sessionUrl(session.getUrl())
       .build();
+    BillingHistory billingHistory = new BillingHistory();
+    billingHistory.setAmount(createPaymentRequest.getAmount().doubleValue())
+      .setPlanUserId(createPaymentRequest.getSubscriptionId())
+      .setStatus("PENDING");
 
+    billingHistoryRepository.save(billingHistory);
     return StripeResponse
       .builder()
       .status(SUCCESS)
@@ -77,6 +84,7 @@ public class StripeService {
       if (status.equalsIgnoreCase(STRIPE_SESSION_STATUS_SUCCESS)) {
         log.info("Payment successfully captured.");
       }
+      billingHistoryRepository.updateBySessionId(sessionId,status);
       CapturePaymentResponse responseData = CapturePaymentResponse
         .builder()
         .sessionId(sessionId)

@@ -276,7 +276,7 @@
                                 </generate>
                                 <target>
                                     <packageName>vn.aivhub.data</packageName>
-                                    <directory>target/generated-sources/jooq</directory>
+                                    <directory>src/main/java/vn/aivhub/oauth/jooq</directory>
                                 </target>
                             </generator>
                         </configuration>
