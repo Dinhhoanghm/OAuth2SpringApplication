@@ -12,7 +12,7 @@ import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.Name;
 import org.jooq.Record;
-import org.jooq.Row15;
+import org.jooq.Row16;
 import org.jooq.Schema;
 import org.jooq.Table;
 import org.jooq.TableField;
@@ -123,6 +123,11 @@ public class User extends TableImpl<UserRecord> {
      */
     public static final TableField<UserRecord, String> SUB = createField(DSL.name("sub"), SQLDataType.VARCHAR(100), USER, "");
 
+    /**
+     * The column <code>public.user.subscription_type</code>.
+     */
+    public static final TableField<UserRecord, String> SUBSCRIPTION_TYPE = createField(DSL.name("subscription_type"), SQLDataType.VARCHAR(100), USER, "");
+
     private User(Name alias, Table<UserRecord> aliased) {
         this(alias, aliased, null);
     }
@@ -163,11 +168,11 @@ public class User extends TableImpl<UserRecord> {
     }
 
     // -------------------------------------------------------------------------
-    // Row15 type methods
+    // Row16 type methods
     // -------------------------------------------------------------------------
 
     @Override
-    public Row15<Integer, String, String, String, String, String, Boolean, Boolean, String, String, Boolean, String, Integer, Integer, String> fieldsRow() {
-        return (Row15) super.fieldsRow();
+    public Row16<Integer, String, String, String, String, String, Boolean, Boolean, String, String, Boolean, String, Integer, Integer, String, String> fieldsRow() {
+        return (Row16) super.fieldsRow();
     }
 }

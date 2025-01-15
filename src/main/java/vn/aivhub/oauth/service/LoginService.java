@@ -53,7 +53,7 @@ public class LoginService {
   String clientSecret;
 
   @Value("${spring.github.client-id}")
-  String  githubClientId;
+  String githubClientId;
   @Value("${spring.github.client-key}")
   String githubClientKey;
 
@@ -81,7 +81,7 @@ public class LoginService {
   public LoginResponseDTO login(String username, String password) throws ApiException {
     User user = userRepository.findByEmail(username);
     if (user != null && passwordEncoder.matches(password, user.getPassword())) {
-      LoginResponseDTO responseDTO =  saveTokenForUser(user);
+      LoginResponseDTO responseDTO = saveTokenForUser(user);
       responseDTO.setUser(user);
       return responseDTO;
     } else {
@@ -197,6 +197,7 @@ public class LoginService {
 
     return jsonObject.getString("access_token").replace("\"", "");
   }
+
   private String getOauthAccessTokenGithub(String code) {
     RestTemplate restTemplate = new RestTemplate();
     HttpHeaders httpHeaders = new HttpHeaders();
@@ -217,6 +218,7 @@ public class LoginService {
 
     return jsonObject.getString("access_token");
   }
+
   public String verifyAccount(String id) {
     AccountVerifycation verification = accountVerificationRepository.findById(id).orElse(null);
 
@@ -353,6 +355,15 @@ public class LoginService {
   private SimpleSecurityUser convertToSecurityUser(User user) {
     SimpleSecurityUser securityUser = new SimpleSecurityUser();
     securityUser.setId(user.getId().toString());
+    securityUser.setDept(user.getDept());
+    securityUser.setEmail(user.getEmail());
+    securityUser.setLastName(user.getLastName());
+    securityUser.setFirstName(user.getFirstName());
+    securityUser.setCompany(user.getCompany());
+    securityUser.setIat(user.getIat());
+    securityUser.setExp(user.getExp());
+    securityUser.setSub(user.getSub());
+    securityUser.setSubscriptionType(user.getSubscriptionType());
     securityUser.setUsername(user.getUsername());
     securityUser.setRoles(Arrays.asList(user.getRole()));
     return securityUser;

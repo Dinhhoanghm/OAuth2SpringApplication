@@ -30,6 +30,7 @@ public class User implements Serializable {
     private Integer iat;
     private Integer exp;
     private String  sub;
+    private String  subscriptionType;
 
     public User() {}
 
@@ -49,6 +50,7 @@ public class User implements Serializable {
         this.iat = value.iat;
         this.exp = value.exp;
         this.sub = value.sub;
+        this.subscriptionType = value.subscriptionType;
     }
 
     public User(
@@ -66,7 +68,8 @@ public class User implements Serializable {
         String  dept,
         Integer iat,
         Integer exp,
-        String  sub
+        String  sub,
+        String  subscriptionType
     ) {
         this.id = id;
         this.username = username;
@@ -83,6 +86,7 @@ public class User implements Serializable {
         this.iat = iat;
         this.exp = exp;
         this.sub = sub;
+        this.subscriptionType = subscriptionType;
     }
 
     /**
@@ -310,6 +314,21 @@ public class User implements Serializable {
         return this;
     }
 
+    /**
+     * Getter for <code>public.user.subscription_type</code>.
+     */
+    public String getSubscriptionType() {
+        return this.subscriptionType;
+    }
+
+    /**
+     * Setter for <code>public.user.subscription_type</code>.
+     */
+    public User setSubscriptionType(String subscriptionType) {
+        this.subscriptionType = subscriptionType;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -409,6 +428,12 @@ public class User implements Serializable {
         }
         else if (!sub.equals(other.sub))
             return false;
+        if (subscriptionType == null) {
+            if (other.subscriptionType != null)
+                return false;
+        }
+        else if (!subscriptionType.equals(other.subscriptionType))
+            return false;
         return true;
     }
 
@@ -431,6 +456,7 @@ public class User implements Serializable {
         result = prime * result + ((this.iat == null) ? 0 : this.iat.hashCode());
         result = prime * result + ((this.exp == null) ? 0 : this.exp.hashCode());
         result = prime * result + ((this.sub == null) ? 0 : this.sub.hashCode());
+        result = prime * result + ((this.subscriptionType == null) ? 0 : this.subscriptionType.hashCode());
         return result;
     }
 
@@ -453,6 +479,7 @@ public class User implements Serializable {
         sb.append(", ").append(iat);
         sb.append(", ").append(exp);
         sb.append(", ").append(sub);
+        sb.append(", ").append(subscriptionType);
 
         sb.append(")");
         return sb.toString();

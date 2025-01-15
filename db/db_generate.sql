@@ -33,8 +33,8 @@ create table if not exists oauth_token
   id                      serial
   constraint oauth_token_pk
   primary key,
-  refresh_token           varchar(200),
-  access_token            varchar(200),
+  refresh_token           varchar(500),
+  access_token            varchar(500),
   user_id                 integer,
   access_expiration_time  timestamp,
   refresh_expiration_time timestamp
