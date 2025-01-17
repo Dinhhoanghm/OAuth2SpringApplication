@@ -94,11 +94,6 @@ public class User extends TableImpl<UserRecord> {
     public static final TableField<UserRecord, String> ROLE = createField(DSL.name("role"), SQLDataType.VARCHAR(100), USER, "USER - ADMIN");
 
     /**
-     * The column <code>public.user.company</code>.
-     */
-    public static final TableField<UserRecord, String> COMPANY = createField(DSL.name("company"), SQLDataType.VARCHAR(200), USER, "");
-
-    /**
      * The column <code>public.user.is_admin</code>.
      */
     public static final TableField<UserRecord, Boolean> IS_ADMIN = createField(DSL.name("is_admin"), SQLDataType.BOOLEAN, USER, "");
@@ -127,6 +122,11 @@ public class User extends TableImpl<UserRecord> {
      * The column <code>public.user.subscription_type</code>.
      */
     public static final TableField<UserRecord, String> SUBSCRIPTION_TYPE = createField(DSL.name("subscription_type"), SQLDataType.VARCHAR(100), USER, "");
+
+    /**
+     * The column <code>public.user.org_id</code>.
+     */
+    public static final TableField<UserRecord, Integer> ORG_ID = createField(DSL.name("org_id"), SQLDataType.INTEGER, USER, "");
 
     private User(Name alias, Table<UserRecord> aliased) {
         this(alias, aliased, null);
@@ -172,7 +172,7 @@ public class User extends TableImpl<UserRecord> {
     // -------------------------------------------------------------------------
 
     @Override
-    public Row16<Integer, String, String, String, String, String, Boolean, Boolean, String, String, Boolean, String, Integer, Integer, String, String> fieldsRow() {
+    public Row16<Integer, String, String, String, String, String, Boolean, Boolean, String, Boolean, String, Integer, Integer, String, String, Integer> fieldsRow() {
         return (Row16) super.fieldsRow();
     }
 }

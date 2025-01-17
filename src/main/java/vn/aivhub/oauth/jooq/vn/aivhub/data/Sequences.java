@@ -31,6 +31,11 @@ public class Sequences {
     public static final Sequence<Integer> OAUTH_TOKEN_ID_SEQ = Internal.createSequence("oauth_token_id_seq", Public.PUBLIC, SQLDataType.INTEGER.nullable(false), null, null, null, null, false, null);
 
     /**
+     * The sequence <code>public.organization_id_seq</code>
+     */
+    public static final Sequence<Integer> ORGANIZATION_ID_SEQ = Internal.createSequence("organization_id_seq", Public.PUBLIC, SQLDataType.INTEGER.nullable(false), null, null, null, null, false, null);
+
+    /**
      * The sequence <code>public.plan_user_id_seq</code>
      */
     public static final Sequence<Integer> PLAN_USER_ID_SEQ = Internal.createSequence("plan_user_id_seq", Public.PUBLIC, SQLDataType.INTEGER.nullable(false), null, null, null, null, false, null);

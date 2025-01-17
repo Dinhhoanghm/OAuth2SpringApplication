@@ -12,16 +12,14 @@ import vn.aivhub.data.tables.pojos.AccountVerifycation;
 import vn.aivhub.data.tables.pojos.OauthToken;
 import vn.aivhub.data.tables.pojos.ResetPasswordToken;
 import vn.aivhub.data.tables.pojos.User;
+import vn.aivhub.data.tables.pojos.Organization;
 import vn.aivhub.oauth.config.authentication.JwtService;
 import vn.aivhub.oauth.config.exception.ApiException;
 import vn.aivhub.oauth.config.jackson.json.JsonObject;
 import vn.aivhub.oauth.config.model.SimpleSecurityUser;
 import vn.aivhub.oauth.data.dto.EmailDetails;
 import vn.aivhub.oauth.data.response.LoginResponseDTO;
-import vn.aivhub.oauth.repository.AccountVerificationRepository;
-import vn.aivhub.oauth.repository.OauthTokenRepository;
-import vn.aivhub.oauth.repository.ResetPasswordTokenRepository;
-import vn.aivhub.oauth.repository.UserRepository;
+import vn.aivhub.oauth.repository.*;
 
 import javax.mail.MessagingException;
 import java.io.UnsupportedEncodingException;
@@ -56,6 +54,8 @@ public class LoginService {
   String githubClientId;
   @Value("${spring.github.client-key}")
   String githubClientKey;
+  @Autowired
+  private OrganizationRepository organizationRepository;
 
 
   private void sendAccountVerificationMail(User user) throws MessagingException, UnsupportedEncodingException {
@@ -90,7 +90,7 @@ public class LoginService {
     }
   }
 
-  public LoginResponseDTO processGrantCode(String code) throws MessagingException, UnsupportedEncodingException {
+  public LoginResponseDTO processGrantCode(String code) throws MessagingException, UnsupportedEncodingException, ApiException {
     String accessToken = getOauthAccessTokenGoogle(code);
 
     User googleUser = getProfileDetailsGoogle(accessToken);
@@ -104,7 +104,7 @@ public class LoginService {
 
   }
 
-  public LoginResponseDTO processGithubGrantCode(String code) throws MessagingException, UnsupportedEncodingException {
+  public LoginResponseDTO processGithubGrantCode(String code) throws MessagingException, UnsupportedEncodingException, ApiException {
     String accessToken = getOauthAccessTokenGithub(code);
 
     User githubUser = getProfileDetailsGithub(accessToken);
@@ -118,8 +118,15 @@ public class LoginService {
 
   }
 
-  public User registerUser(String firstName, String lastName, String email, String password) throws MessagingException, UnsupportedEncodingException {
-    User user = new User();
+  public User registerUser(String firstName, String lastName, String email, String password) throws MessagingException, UnsupportedEncodingException, ApiException {
+    User user = userRepository.findByEmail(email);
+    if (user != null) {
+      throw new ApiException("User already exists");
+    }
+    String company = "DEFAULT";
+    Organization organization = new Organization();
+    organization.setName(company);
+    organization = organizationRepository.save(organization);
     user.setEnabled(true);
     user.setEmailVerified(false);
     user.setRole("USER");
@@ -127,7 +134,7 @@ public class LoginService {
     user.setLastName(lastName);
     user.setEmail(email);
     user.setPassword(passwordEncoder.encode(password));
-
+    user.setOrgId(organization.getId());
     user = userRepository.save(user);
     if (email != null) {
       sendAccountVerificationMail(user);
@@ -359,7 +366,6 @@ public class LoginService {
     securityUser.setEmail(user.getEmail());
     securityUser.setLastName(user.getLastName());
     securityUser.setFirstName(user.getFirstName());
-    securityUser.setCompany(user.getCompany());
     securityUser.setIat(user.getIat());
     securityUser.setExp(user.getExp());
     securityUser.setSub(user.getSub());

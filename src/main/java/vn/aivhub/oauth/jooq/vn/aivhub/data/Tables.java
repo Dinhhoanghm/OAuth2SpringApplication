@@ -8,6 +8,7 @@ import vn.aivhub.data.tables.AccountVerifycation;
 import vn.aivhub.data.tables.BillingHistory;
 import vn.aivhub.data.tables.ChargePlan;
 import vn.aivhub.data.tables.OauthToken;
+import vn.aivhub.data.tables.Organization;
 import vn.aivhub.data.tables.PlanUser;
 import vn.aivhub.data.tables.ResetPasswordToken;
 import vn.aivhub.data.tables.User;
@@ -38,6 +39,11 @@ public class Tables {
      * The table <code>public.oauth_token</code>.
      */
     public static final OauthToken OAUTH_TOKEN = OauthToken.OAUTH_TOKEN;
+
+    /**
+     * The table <code>public.organization</code>.
+     */
+    public static final Organization ORGANIZATION = Organization.ORGANIZATION;
 
     /**
      * The table <code>public.plan_user</code>.

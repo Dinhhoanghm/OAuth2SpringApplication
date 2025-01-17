@@ -16,6 +16,7 @@ import vn.aivhub.data.tables.AccountVerifycation;
 import vn.aivhub.data.tables.BillingHistory;
 import vn.aivhub.data.tables.ChargePlan;
 import vn.aivhub.data.tables.OauthToken;
+import vn.aivhub.data.tables.Organization;
 import vn.aivhub.data.tables.PlanUser;
 import vn.aivhub.data.tables.ResetPasswordToken;
 import vn.aivhub.data.tables.User;
@@ -55,6 +56,11 @@ public class Public extends SchemaImpl {
     public final OauthToken OAUTH_TOKEN = OauthToken.OAUTH_TOKEN;
 
     /**
+     * The table <code>public.organization</code>.
+     */
+    public final Organization ORGANIZATION = Organization.ORGANIZATION;
+
+    /**
      * The table <code>public.plan_user</code>.
      */
     public final PlanUser PLAN_USER = PlanUser.PLAN_USER;
@@ -88,6 +94,7 @@ public class Public extends SchemaImpl {
             Sequences.BILLING_HISTORY_ID_SEQ,
             Sequences.CHARGE_PLAN_ID_SEQ,
             Sequences.OAUTH_TOKEN_ID_SEQ,
+            Sequences.ORGANIZATION_ID_SEQ,
             Sequences.PLAN_USER_ID_SEQ,
             Sequences.RESET_PASSWORD_TOKEN_ID_SEQ,
             Sequences.USER_ID_SEQ);
@@ -100,6 +107,7 @@ public class Public extends SchemaImpl {
             BillingHistory.BILLING_HISTORY,
             ChargePlan.CHARGE_PLAN,
             OauthToken.OAUTH_TOKEN,
+            Organization.ORGANIZATION,
             PlanUser.PLAN_USER,
             ResetPasswordToken.RESET_PASSWORD_TOKEN,
             User.USER);

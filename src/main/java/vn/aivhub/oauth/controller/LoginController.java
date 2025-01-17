@@ -19,7 +19,7 @@ public class LoginController {
   }
 
   @PostMapping("/register")
-  public String register(@RequestBody UserRequest userRequest) throws MessagingException, UnsupportedEncodingException {
+  public String register(@RequestBody UserRequest userRequest) throws MessagingException, UnsupportedEncodingException, ApiException {
     loginService.registerUser(userRequest.getFirstName(), userRequest.getLastName(), userRequest.getEmail(), userRequest.getPassword());
     return "User registered successfully! You need activate your email address";
   }
@@ -33,12 +33,12 @@ public class LoginController {
   public LoginResponseDTO grantCode(@RequestParam("code") String code,
                                     @RequestParam("scope") String scope,
                                     @RequestParam("authuser") String authUser,
-                                    @RequestParam("prompt") String prompt) throws MessagingException, UnsupportedEncodingException {
+                                    @RequestParam("prompt") String prompt) throws MessagingException, UnsupportedEncodingException, ApiException {
     return loginService.processGrantCode(code);
   }
 
   @GetMapping("/github/grantcode")
-  public LoginResponseDTO githubGrantCode(@RequestParam("code") String code) throws MessagingException, UnsupportedEncodingException {
+  public LoginResponseDTO githubGrantCode(@RequestParam("code") String code) throws MessagingException, UnsupportedEncodingException, ApiException {
     return loginService.processGithubGrantCode(code);
   }
 

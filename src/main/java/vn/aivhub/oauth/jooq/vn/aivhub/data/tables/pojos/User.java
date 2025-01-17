@@ -24,13 +24,13 @@ public class User implements Serializable {
     private Boolean enabled;
     private Boolean emailVerified;
     private String  role;
-    private String  company;
     private Boolean isAdmin;
     private String  dept;
     private Integer iat;
     private Integer exp;
     private String  sub;
     private String  subscriptionType;
+    private Integer orgId;
 
     public User() {}
 
@@ -44,13 +44,13 @@ public class User implements Serializable {
         this.enabled = value.enabled;
         this.emailVerified = value.emailVerified;
         this.role = value.role;
-        this.company = value.company;
         this.isAdmin = value.isAdmin;
         this.dept = value.dept;
         this.iat = value.iat;
         this.exp = value.exp;
         this.sub = value.sub;
         this.subscriptionType = value.subscriptionType;
+        this.orgId = value.orgId;
     }
 
     public User(
@@ -63,13 +63,13 @@ public class User implements Serializable {
         Boolean enabled,
         Boolean emailVerified,
         String  role,
-        String  company,
         Boolean isAdmin,
         String  dept,
         Integer iat,
         Integer exp,
         String  sub,
-        String  subscriptionType
+        String  subscriptionType,
+        Integer orgId
     ) {
         this.id = id;
         this.username = username;
@@ -80,13 +80,13 @@ public class User implements Serializable {
         this.enabled = enabled;
         this.emailVerified = emailVerified;
         this.role = role;
-        this.company = company;
         this.isAdmin = isAdmin;
         this.dept = dept;
         this.iat = iat;
         this.exp = exp;
         this.sub = sub;
         this.subscriptionType = subscriptionType;
+        this.orgId = orgId;
     }
 
     /**
@@ -225,21 +225,6 @@ public class User implements Serializable {
     }
 
     /**
-     * Getter for <code>public.user.company</code>.
-     */
-    public String getCompany() {
-        return this.company;
-    }
-
-    /**
-     * Setter for <code>public.user.company</code>.
-     */
-    public User setCompany(String company) {
-        this.company = company;
-        return this;
-    }
-
-    /**
      * Getter for <code>public.user.is_admin</code>.
      */
     public Boolean getIsAdmin() {
@@ -329,6 +314,21 @@ public class User implements Serializable {
         return this;
     }
 
+    /**
+     * Getter for <code>public.user.org_id</code>.
+     */
+    public Integer getOrgId() {
+        return this.orgId;
+    }
+
+    /**
+     * Setter for <code>public.user.org_id</code>.
+     */
+    public User setOrgId(Integer orgId) {
+        this.orgId = orgId;
+        return this;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -392,12 +392,6 @@ public class User implements Serializable {
         }
         else if (!role.equals(other.role))
             return false;
-        if (company == null) {
-            if (other.company != null)
-                return false;
-        }
-        else if (!company.equals(other.company))
-            return false;
         if (isAdmin == null) {
             if (other.isAdmin != null)
                 return false;
@@ -434,6 +428,12 @@ public class User implements Serializable {
         }
         else if (!subscriptionType.equals(other.subscriptionType))
             return false;
+        if (orgId == null) {
+            if (other.orgId != null)
+                return false;
+        }
+        else if (!orgId.equals(other.orgId))
+            return false;
         return true;
     }
 
@@ -450,13 +450,13 @@ public class User implements Serializable {
         result = prime * result + ((this.enabled == null) ? 0 : this.enabled.hashCode());
         result = prime * result + ((this.emailVerified == null) ? 0 : this.emailVerified.hashCode());
         result = prime * result + ((this.role == null) ? 0 : this.role.hashCode());
-        result = prime * result + ((this.company == null) ? 0 : this.company.hashCode());
         result = prime * result + ((this.isAdmin == null) ? 0 : this.isAdmin.hashCode());
         result = prime * result + ((this.dept == null) ? 0 : this.dept.hashCode());
         result = prime * result + ((this.iat == null) ? 0 : this.iat.hashCode());
         result = prime * result + ((this.exp == null) ? 0 : this.exp.hashCode());
         result = prime * result + ((this.sub == null) ? 0 : this.sub.hashCode());
         result = prime * result + ((this.subscriptionType == null) ? 0 : this.subscriptionType.hashCode());
+        result = prime * result + ((this.orgId == null) ? 0 : this.orgId.hashCode());
         return result;
     }
 
@@ -473,13 +473,13 @@ public class User implements Serializable {
         sb.append(", ").append(enabled);
         sb.append(", ").append(emailVerified);
         sb.append(", ").append(role);
-        sb.append(", ").append(company);
         sb.append(", ").append(isAdmin);
         sb.append(", ").append(dept);
         sb.append(", ").append(iat);
         sb.append(", ").append(exp);
         sb.append(", ").append(sub);
         sb.append(", ").append(subscriptionType);
+        sb.append(", ").append(orgId);
 
         sb.append(")");
         return sb.toString();
