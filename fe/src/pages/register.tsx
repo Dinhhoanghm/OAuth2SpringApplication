@@ -54,19 +54,19 @@ const RegisterPage = () => {
           <div className="space-y-4">
             <input
               type="text"
-              name="firstName"
+              name="first_name"
               placeholder="First name"
               className="block w-full border border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-              value={formData.firstName}
+              value={formData.first_name}
               onChange={handleChange}
               required
             />
             <input
               type="text"
-              name="lastName"
+              name="last_name"
               placeholder="Last name"
               className="block w-full border border-gray-300 rounded-md px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-              value={formData.lastName}
+              value={formData.last_name}
               onChange={handleChange}
               required
             />

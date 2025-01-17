@@ -8,12 +8,25 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import axiosInstance from '../axios';
 import { Switch } from '../components/ui/switch';
+import { CardContent, CardHeader, CardTitle } from '../components/ui/card';
+import { formatCurrency } from '../lib/utils';
+
+interface Billing {
+  id: number;
+  plan_user_id: number;
+  status: string;
+  created_at: string; // or use `LocalDateTime` if your app supports it
+  paid_at: string; // or use `LocalDateTime`
+  amount: number;
+  session_id: string;
+}
 
 export default function SettingsPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [isAddingUser, setIsAddingUser] = useState(false);
   const [isEditingUser, setIsEditingUser] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [billingHistory, setBillingHistory] = useState<Billing[]>([]);
   const [newUser, setNewUser] = useState({ last_name: '', email: '', role: '', password: '', company: '' });
   const [userData, setUserData] = useState({
     id: '',
@@ -35,6 +48,19 @@ export default function SettingsPage() {
       [id]: value,
     }));
   };
+  useEffect(() => {
+    // Fetch billing history from the API using axios
+    const fetchBillingHistory = async () => {
+      try {
+        const response = await axiosInstance.get('/api/billingHistory/getAll'); // Replace with your API endpoint
+        setBillingHistory(response.data); // Assuming response.data contains the billing data
+      } catch (error) {
+        console.error('Error fetching billing history:', error);
+      }
+    };
+
+    fetchBillingHistory();
+  }, []);
 
   const updatePassword = async () => {
     const { currentPassword, newPassword, confirmPassword } = passwords;
@@ -464,10 +490,36 @@ export default function SettingsPage() {
               </Card>
 
               <Card>
-                <div className="p-6">
-                  <h3 className="text-lg font-medium mb-4">Billing History</h3>
-                  <div className="text-sm text-gray-500">No billing history available</div>
-                </div>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle>Billing History</CardTitle>
+                  <Button variant="outline" size="sm">
+                    Download All
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  <div className="rounded-lg border">
+                    {/* Iterate through the billingHistory to dynamically create each record */}
+                    {billingHistory.map((billing) => (
+                      <div key={billing.id} className="flex items-center justify-between p-4 border-b">
+                        <div className="space-y-1">
+                          <p className="font-medium">
+                            {billing.status === 'Paid' ? 'Pro Plan Subscription' : 'Basic Plan Subscription'}
+                          </p>
+                          <p className="text-sm text-gray-500">{new Date(billing.created_at).toLocaleDateString()}</p>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                          <span className={`text-${billing.status === 'Paid' ? 'green' : 'red'}-600 font-medium`}>
+                            {billing.status}
+                          </span>
+                          <p className="font-medium">{formatCurrency(billing.amount)}</p>
+                          <Button variant="ghost" size="sm">
+                            View
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
               </Card>
             </div>
           </TabsContent>
