@@ -11,13 +11,13 @@ create table if not exists "user"
   enabled           boolean,
   email_verified    boolean,
   role              varchar(100),
-  company           varchar(200),
   is_admin          boolean,
   dept              varchar(200),
   iat               integer,
   exp               integer,
   sub               varchar(100),
-  subscription_type varchar(100)
+  subscription_type varchar(100),
+  org_id            integer
   );
 
 comment on column "user".role is 'USER - ADMIN';
@@ -107,5 +107,16 @@ create table if not exists billing_history
   );
 
 alter table billing_history
+  owner to admin;
+
+create table if not exists organization
+(
+  id   serial
+  constraint organization_pk
+  primary key,
+  name varchar(200)
+  );
+
+alter table organization
   owner to admin;
 

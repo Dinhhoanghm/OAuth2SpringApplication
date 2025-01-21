@@ -123,6 +123,9 @@ public class LoginService {
     if (user != null) {
       throw new ApiException("User already exists");
     }
+    if (user == null ) {
+      user = new User();
+    }
     String company = "DEFAULT";
     Organization organization = new Organization();
     organization.setName(company);

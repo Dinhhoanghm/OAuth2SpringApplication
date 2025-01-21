@@ -1,4 +1,4 @@
-package vn.aivhub.oauth.data.request.stripe;
+package vn.aivhub.oauth.config.model.stripe.request;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

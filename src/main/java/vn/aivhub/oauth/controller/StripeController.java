@@ -2,8 +2,8 @@ package vn.aivhub.oauth.controller;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import vn.aivhub.oauth.data.request.stripe.CreatePaymentRequest;
-import vn.aivhub.oauth.data.response.stripe.StripeResponse;
+import vn.aivhub.oauth.config.model.stripe.request.CreatePaymentRequest;
+import vn.aivhub.oauth.config.model.stripe.response.StripeResponse;
 import vn.aivhub.oauth.service.StripeService;
 
 @RestController

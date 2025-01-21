@@ -2,19 +2,22 @@ package vn.aivhub.oauth.service;
 
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Customer;
+import com.stripe.model.Subscription;
 import com.stripe.model.checkout.Session;
+import com.stripe.param.SubscriptionCreateParams;
 import com.stripe.param.checkout.SessionCreateParams;
+import com.stripe.param.checkout.SessionRetrieveParams;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import vn.aivhub.data.tables.pojos.BillingHistory;
-import vn.aivhub.oauth.data.request.stripe.CreatePaymentRequest;
-import vn.aivhub.oauth.data.response.stripe.CapturePaymentResponse;
-import vn.aivhub.oauth.data.response.stripe.CreatePaymentResponse;
-import vn.aivhub.oauth.data.response.stripe.StripeResponse;
+import vn.aivhub.oauth.config.model.stripe.request.CreatePaymentRequest;
+import vn.aivhub.oauth.config.model.stripe.response.CapturePaymentResponse;
+import vn.aivhub.oauth.config.model.stripe.response.CreatePaymentResponse;
+import vn.aivhub.oauth.config.model.stripe.response.StripeResponse;
 import vn.aivhub.oauth.repository.BillingHistoryRepository;
 
-import static vn.aivhub.data.Tables.BILLING_HISTORY;
 import static vn.aivhub.oauth.data.constant.StripeConstant.*;
 import static vn.aivhub.oauth.util.StripeUtil.*;
 
@@ -61,6 +64,7 @@ public class StripeService {
       .build();
     BillingHistory billingHistory = new BillingHistory();
     billingHistory.setAmount(createPaymentRequest.getAmount().doubleValue())
+      .setSessionId(session.getId())
       .setPlanUserId(createPaymentRequest.getSubscriptionId())
       .setStatus("PENDING");
 
@@ -73,6 +77,7 @@ public class StripeService {
       .data(responseData)
       .build();
   }
+
 
   public StripeResponse capturePayment(String sessionId) {
     Stripe.apiKey = secretKey;
